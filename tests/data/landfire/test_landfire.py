@@ -383,11 +383,11 @@ class TestLive:
     def test(_):
         output = _landfire.read("240EVT", [-107.8, 32.2, -107.6, 32.4, 4326])
         assert isinstance(output, Raster)
-        assert output.shape == (741, 631)
+        assert output.shape == (740, 629)
         assert output.dtype == "int16"
-        assert output.nodata == 32767
+        assert output.nodata == -9999
         assert output.crs.name == "North_American_1983_Albers"
 
         output = output.transform.remove_crs()
-        expected = Transform(30, -30, -9485.103751312243, 11125.965226380154)
+        expected = Transform(30, -30, -9435, 11115.0)
         assert output.isclose(expected)

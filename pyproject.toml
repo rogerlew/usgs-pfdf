@@ -63,7 +63,7 @@ black = ">=24.3.0"
 isort = ">=5.12.0"
 
 # Testing
-safety = "3.2.7"
+pip-audit = "*"
 pytest = ">=7.3.1"
 pytest-cov = "*"
 coverage = "*"
@@ -134,7 +134,7 @@ imports = ["webbrowser", "pathlib"]
 
 [tool.poe.tasks.safety]
 help = "Checks package dependencies for security issues"
-cmd = "safety check"
+cmd = "pip-audit"
 
 [tool.poe.tasks.update]
 help = "Deletes poetry.lock and reinstalls the project"
