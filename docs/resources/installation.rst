@@ -8,7 +8,7 @@ Prerequisites
 
 Python
 ++++++
-pfdf requires `Python 3.11 or 3.12 <https://www.python.org/downloads/>`_.
+pfdf requires `Python 3.11+ <https://www.python.org/downloads/>`_.
 
 .. _install-environment:
 
@@ -18,11 +18,11 @@ We **strongly recommend** installing pfdf in a clean virtual environment. This i
 
 For example, after installing miniforge, you can create a new python environment using::
 
-    mamba create -n pfdf python=3.12 --yes
+    conda create -n pfdf python=3.13 --yes
 
 and then activate the environment with::
 
-    mamba activate pfdf
+    conda activate pfdf
 
 .. _miniforge: https://github.com/conda-forge/miniforge
 .. _conda: https://anaconda.org/anaconda/conda

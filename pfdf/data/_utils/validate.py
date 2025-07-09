@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import typing
 
-import pfdf._validate.projection as validate
+import pfdf._validate.projection as pvalidate
 from pfdf._utils import aslist
 
 if typing.TYPE_CHECKING:
@@ -19,7 +19,7 @@ if typing.TYPE_CHECKING:
 
 def bounds(bounds: Any, as_string: bool = True, delimiter: str = ",") -> str:
     "Validates a bounding box as a delimited EPSG:4326 string"
-    bounds = validate.bounds(bounds, require_crs=True)
+    bounds = pvalidate.bounds(bounds, require_crs=True)
     if as_string:
         bounds = bounds.reproject(4326)
         bounds = delimiter.join(str(bound) for bound in bounds.bounds)

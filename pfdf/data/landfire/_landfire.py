@@ -2,13 +2,12 @@
 Functions to acquire data from LFPS
 ----------
 Functions:
-    read        - Read data from a LFPS raster dataset as a Raster object
-    download    - Downloads a LFPS data product to the local file system
+    read            - Read data from a LFPS raster dataset as a Raster object
+    download        - Downloads a LFPS data product to the local file system
 
 Utilities:
     _execute_job    - Queries a job until it succeeds or times out
     _check_status   - Checks if a job has succeeded
-    _parse_url      - Determines the download URL for a completed job
 """
 
 from __future__ import annotations
@@ -19,8 +18,8 @@ from tempfile import TemporaryDirectory
 from time import sleep
 
 import pfdf._validate.core as cvalidate
-from pfdf.data._utils import requests, unzip, validate
-from pfdf.data.landfire import _api, _validate, api
+from pfdf.data._utils import requests, unzip
+from pfdf.data.landfire import _validate, job
 from pfdf.errors import DataAPIError, InvalidLFPSJobError, LFPSJobTimeoutError
 from pfdf.raster import Raster
 
@@ -39,6 +38,7 @@ if typing.TYPE_CHECKING:
 def download(
     layer: str,
     bounds: BoundsInput,
+    email: str,
     *,
     parent: Optional[Pathlike] = None,
     name: Optional[str] = None,
@@ -49,13 +49,14 @@ def download(
     """
     Download a product from LANDFIRE LFPS
     ----------
-    download(layer, bounds)
+    download(layer, bounds, email)
     Downloads data files for the indicated data layer to the local file system. The
     `layer` should be the name of an LFPS raster layer. You can find a list of LFPS
     layer names here: https://lfps.usgs.gov/helpdocs/productstable.html
     The `bounds` input is used to limit the size of the data query, and should be a
     BoundingBox-like input with a CRS. the command will only download data within this
-    domain.
+    domain. Finally, you must provide an email address, which LFPS uses to track usage
+    statistics.
 
     By default, this command will download data into a folder named "landfire-<layer>"
     within the current directory, but see below for other path options. Raises an
@@ -97,6 +98,7 @@ def download(
     Inputs:
         layer: The name of a LFPS data layer
         bounds: The bounding box in which data should be downloaded
+        email: An email address associated with the data request
         parent: The path to the parent folder where the data folder should be downloaded.
             Defaults to the current folder.
         name: The name for the downloaded data folder. Defaults to landfire-<layer>
@@ -109,21 +111,20 @@ def download(
         Path: The path to the downloaded data folder
     """
 
-    # Validate. Only a single layer is supported.
-    bounds = validate.bounds(bounds, as_string=False)
+    # Validate. Only a single layer is supported
     layer = _validate.layer(layer)
     path = cvalidate.download_path(
         parent, name, default_name=f"landfire-{layer}", overwrite=False
     )
-
-    # Validate job query parameters
     max_job_time = _validate.max_job_time(max_job_time)
     refresh_rate = _validate.refresh_rate(refresh_rate)
 
-    # Submit job. Query status until the job succeeds or times out. Download dataset
-    id = api.submit_job(layer, bounds, timeout=timeout)
-    job = _execute_job(id, max_job_time, refresh_rate, timeout)
-    url = _parse_url(job, id, timeout)
+    # Submit job. Query status until the job succeeds or times out. Get the download
+    # URL and extract the download ID. (Note that this differs from the processing ID
+    # used to query the job). Download the dataset.
+    id = job.submit(layer, bounds, email, timeout=timeout)
+    url = _execute_job(id, max_job_time, refresh_rate, timeout)
+    id = Path(url).stem
     data = requests.content(url, {}, timeout, "LANDFIRE LFPS")
 
     # Unzip the dataset in a temp folder
@@ -131,14 +132,15 @@ def download(
         extracted = Path(temp) / "extracted"
         unzip(data, extracted)
 
-        # Replace the job ID in filenames with the download name
+        # Replace the job ID in filenames with the download name. Note that the
+        # download job ID is different from the processing job ID used for queries
         for file in list(extracted.iterdir()):
             filename = file.name
             if id in filename:
                 filename = filename.replace(id, path.name)
                 file.rename(extracted / filename)
 
-        # Move to the final folder and return the path
+        # Also rename the folder and return the final path
         extracted.rename(path)
     return path
 
@@ -146,6 +148,7 @@ def download(
 def read(
     layer: str,
     bounds: BoundsInput,
+    email: str,
     *,
     timeout: Optional[timeout] = 10,
     max_job_time: Optional[float] = 60,
@@ -154,13 +157,14 @@ def read(
     """
     Reads a LANDFIRE raster into memory as a Raster object
     ----------
-    read(layer, bounds)
+    read(layer, bounds, email)
     Reads data from a LFPS raster dataset into memory as a Raster object. The
     `layer` should be the name of an LFPS raster layer. You can find a list of LFPS
     layer names here: https://lfps.usgs.gov/helpdocs/productstable.html
     The `bounds` input is used to limit the size of the data query, and should be a
     BoundingBox-like input with a CRS. The command will only read data from within this
-    bounding box.
+    bounding box. Finally, you must provide an email address, which LFPS uses to track
+    usage statistics.
 
     read(..., *, max_job_time)
     read(..., *, refresh_rate)
@@ -189,6 +193,7 @@ def read(
     Inputs:
         layer: The name of a LFPS data layer
         bounds: The bounding box in which data should be read
+        email: An email address associated with the data request
         max_job_time: A maximum allowed time (in seconds) for a job to complete processing
         refresh_rate: The frequency (in seconds) at which this command should check the
             status of a submitted job.
@@ -204,6 +209,7 @@ def read(
         download(
             layer,
             bounds,
+            email,
             parent=parent,
             name="data",
             timeout=timeout,
@@ -237,53 +243,41 @@ def _execute_job(
     # Wait several seconds, then query the job status
     while max_job_time > 0:
         sleep(refresh_rate)
-        job = api.query_job(id, timeout=timeout)
-        succeeded = _check_status(job)
+        info = job.status(id, timeout=timeout, strict=True)
+        status = _validate.field(info, "status", "job status")
+        succeeded = _check_status(id, status)
 
-        # Exit if successful. Otherwise, reduce the timeout clock
+        # If successful, return the download URL. Otherwise, reduce the timeout clock
         if succeeded:
-            return job
+            url = _validate.field(info, "outputFile", '"outputFile" download URL')
+            return url
         max_job_time -= refresh_rate
 
-    # Informative error if it timed out
-    if not succeeded:
-        raise LFPSJobTimeoutError(
-            f"LANDFIRE LFPS took too long to process job {id}. Either try using a "
-            f"smaller bounding box, or try again later if the server is running slowly.",
-            id,
-        )
+    # Informative error if timed out
+    raise LFPSJobTimeoutError(
+        f"LANDFIRE LFPS took too long to process job {id}. Either try using a "
+        f"smaller bounding box, or try again later if the server is running slowly.",
+        id,
+    )
 
 
-def _check_status(job: dict) -> bool:
+def _check_status(id: str, status: str) -> bool:
     "Checks that a job has succeeded, or provides an informative error if it failed"
 
-    # Extract status. Return boolean for valid status codes
-    status = _api.status(job)
-    if status in [
-        "esriJobNew",
-        "esriJobExecuting",
-        "esriJobSubmitted",
-        "esriJobWaiting",
-    ]:
+    # Extract completion status. Return boolean for valid status codes
+    if status in ["Pending", "Executing"]:
         return False
-    elif status == "esriJobSucceeded":
+    elif status == "Succeeded":
         return True
 
     # Informative error if the job failed
-    id = _api.field(job, "jobId", "job ID")
-    if status in ["esriJobCancelling", "esriJobCancelled"]:
+    if status == "Canceled":
         raise InvalidLFPSJobError(
             f"Cannot download job {id} because the job was cancelled. "
             f"Try submitting a new job.",
             id,
         )
-    elif status == "esriJobTimedOut":
-        raise LFPSJobTimeoutError(
-            f"Cannot download job {id} because the job timed out. "
-            f"Try submitting a new job with fewer layers.",
-            id,
-        )
-    elif status in ["esriJobFailed", "expectedFailure"]:
+    elif status == "Failed":
         raise InvalidLFPSJobError(
             f"Cannot download job {id} because the job failed. "
             f"Try submitting a new job with different parameters.",
@@ -293,18 +287,3 @@ def _check_status(job: dict) -> bool:
         raise DataAPIError(
             f"LANDFIRE LFPS returned an unrecognized status code: {status}"
         )
-
-
-def _parse_url(job: dict, id: str, timeout: timeout) -> str:
-    "Extracts the download URL for a completed job"
-
-    # Get the results URL
-    results = _api.field(job, "results", "results info")
-    output = _api.field(results, "Output_File", "output file info")
-    url_tail = _api.field(output, "paramUrl", "output file info URL")
-    url = api.job_url(id) + "/" + url_tail
-
-    # Get the download URL from the results
-    output = _api.json(url, {}, timeout)
-    value = _api.field(output, "value", "output file value")
-    return _api.field(value, "url", "download URL")

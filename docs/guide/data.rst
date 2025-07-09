@@ -28,13 +28,13 @@ The landfire package contains routines for accessing data from the `LANDFIRE Pro
 
 Most users will want to start with the :ref:`read function <pfdf.data.landfire.read>`. This function streams data from a LANDFIRE raster data layer within a bounding box - the read data is returned as a Raster object. Alternatively, use the :ref:`download command <pfdf.data.landfire.download>` to save a product to the local file system. Unlike the ``read`` function, the ``download`` command can be used to acquire datasets derived from vector features. You can find a list of available data layer names here: `LANDFIRE Layers <https://lfps.usgs.gov/helpdocs/productstable.html>`_.
 
-This package also includes the :ref:`api module <pfdf.data.landfire.api>`, which can be used for low-level interactions with LFPS. Most users will not need this module, but developers may find it useful for custom data acquisition routines. In brief, the typical workflow is to:
+This package also includes the :ref:`products <pfdf.data.landfire.products>`, :ref:`job <pfdf.data.landfire.job>`, and :ref:`url <pfdf.data.landfire.url>` modules, which can be used for low-level interactions with LFPS. Most users will not need these modules, but developers may find them useful for custom data acquisition routines. In brief, the typical workflow is to:
 
 1. Submit a job request for a data product
 2. Wait/Query the job until it completes
 3. Download staged data products
 
-and please consult the :ref:`module's API <pfdf.data.landfire.api>` for more details.
+and please consult the module APIs for more details.
 
 
 NOAA Atlas 14

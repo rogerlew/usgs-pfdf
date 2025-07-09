@@ -6,6 +6,7 @@ from remote servers. Many of these functions are intended to help validate serve
 responses and provide informative errors when an HTTP request is invalid.
 ----------
 Main functions:
+    query_url           - Builds a query URL from base URL and parameters
     get                 - Validates and returns an HTTP response
     content             - Validates and returns HTTP response content (as bytes)
     json                - Validates and returns an HTTP response as a JSON dict
@@ -20,6 +21,7 @@ Utilities:
 from __future__ import annotations
 
 import typing
+from urllib.parse import unquote
 
 import requests
 from requests.exceptions import ConnectTimeout, HTTPError, JSONDecodeError, ReadTimeout
@@ -57,6 +59,16 @@ def _validate(
     else:
         outages = aslist(outages)
     return timeout, servers, outages
+
+
+def query_url(base: str, params: dict, decode: bool) -> str:
+    "Builds a query URL from a base URL and parameters"
+
+    request = requests.Request(url=base, params=params)
+    url = request.prepare().url
+    if decode:
+        url = unquote(url)
+    return url
 
 
 def get(

@@ -43,7 +43,7 @@ Data Acquisition:
     TNMError                - Errors unique to the TNM API
     TooManyTNMProductsError - When a TNM query has too many search results
     NoTNMProductsError      - When there are no TNM products in the search results
-    LFPSError               - Errors unique to the LANDFIRE LFSP API
+    LFPSError               - Errors unique to the LANDFIRE LFPS API
     InvalidLFPSJobError     - When a LANDFIRE LFPS job cannot be used for a data read
     LFPSJobTimeoutError     - When a LANDFIRE LFPS job takes too long to execute
 """

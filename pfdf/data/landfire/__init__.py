@@ -14,20 +14,23 @@ command to save a product to the local file system. Unlike the `read` function, 
 `download` command can be used to acquire datasets derived from vector features. You can
 find a list of available data layer names here: https://lfps.usgs.gov/helpdocs/productstable.html
 
-This package also includes the "api" module, which can be used for low-level
-interactions with the LFPS API. Most users will not need this module, but developers
-may find it useful for custom data acquisition routines.
+This package also includes the `url`, `products`, and `job` modules, which can be used
+for low-level interactions with the LFPS API. Most users will not need this module, but
+developers may find them useful for custom data acquisition routines.
 ----------
-Contents:
+Functions:
     read        - Reads a LANDFIRE raster dataset into memory as a Raster object
     download    - Download one or more LANDFIRE data products to the local filesystem
-    api         - Module supporting low-level LFPS API calls
+
+Modules:
+    url         - Functions returning URLs used to query the LFPS API
+    products    - Functions to query product info from the LFPS API
+    job         - Functions for interacting with LFPS jobs
 
 Internal modules:
-    _api        - Utilities supporting the api module
     _landfire   - Module implementing the read and download functions
     _validate   - Module for validating LFPS parameters
 """
 
-from pfdf.data.landfire import api
+from pfdf.data.landfire import job, products, url
 from pfdf.data.landfire._landfire import download, read
