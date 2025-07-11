@@ -60,7 +60,7 @@ workflow:
   dependencies: 
     - build12
 
-  .python13:
+.python13:
   extends: 
     - .python13-base
     - .activate
