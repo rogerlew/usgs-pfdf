@@ -1,0 +1,21 @@
+pfdf 3.0.1 Release Notes
+========================
+
+This release updates the :ref:`pfdf.data.landfire <pfdf.data.landfire>` package to accommodate changes to `LANDFIRE's <https://landfire.gov/>`_ `LFPS API <https://lfps.usgs.gov/>`_. The release also relaxes the Python version requirement to >= 3.11.
+
+LANDFIRE LFPS
+-------------
+In June 2025, LANDFIRE upgraded to a new API - this included a new base URL, new query types, and new required query parameters. This patch addresses these updates.
+
+**Key Changes**
+
+The :ref:`landfire.read <pfdf.data.landfire.read>` and :ref:`landfire.download <pfdf.data.landfire.download>` commands now have a required ``email`` input - this should be an email address associated with the data request. LANDFIRE uses this address to track usage statistics.
+
+**Low Level API**
+
+The former ``data.landfire.api`` module has been replaced with the more structured :ref:`url <pfdf.data.landfire.url>`, :ref:`products <pfdf.data.landfire.products>`, and :ref:`job <pfdf.data.landfire.job>` modules. Please consult the APIs for details on using these new modules.
+
+Python Version Requirement
+--------------------------
+
+Previous releases restricted ``pfdf`` installations to Python 3.11 or 3.12. This patch relaxes this requirement to any Python version >= 3.11.
