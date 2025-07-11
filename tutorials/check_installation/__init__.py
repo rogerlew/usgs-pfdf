@@ -16,9 +16,9 @@ import sys
 version = sys.version_info
 if version.major != 3:
     raise RuntimeError("You must use a Python 3 kernel to run this notebook")
-elif version.minor not in [11, 12]:
+elif version.minor < 11:
     raise RuntimeError(
-        "You must use Python 3.11 or 3.12 to run this notebook, "
+        "You must use Python 3.11+ to run this notebook, "
         "but the current kernel uses Python 3.%i" % version.minor
     )
 

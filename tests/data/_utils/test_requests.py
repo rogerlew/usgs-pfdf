@@ -127,6 +127,26 @@ class TestReadTimeout:
 #####
 
 
+class TestQueryUrl:
+    def test(_):
+        base = "https://www.usgs.gov"
+        params = {
+            "test": "(in_parens)",
+            "another": 5,
+        }
+        output = _requests.query_url(base, params, decode=False)
+        assert output == r"https://www.usgs.gov/?test=%28in_parens%29&another=5"
+
+    def test_decode(_):
+        base = "https://www.usgs.gov"
+        params = {
+            "test": "(in_parens)",
+            "another": 5,
+        }
+        output = _requests.query_url(base, params, decode=True)
+        assert output == r"https://www.usgs.gov/?test=(in_parens)&another=5"
+
+
 class TestGet:
     @patch("requests.get", spec=True)
     def test_valid(_, mock, response, args):

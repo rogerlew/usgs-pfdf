@@ -1,10 +1,10 @@
 [project]
 name = "pfdf"
-version = "3.0.0"
+version = "3.0.1"
 description = "A package to facilitate post-wildfire debris-flow hazard assessments and research"
 license = "GPL-3.0-only"
 readme = "README.md"
-requires-python = ">=3.11,<3.13"
+requires-python = ">=3.11"
 authors = [
     {name = "Jonathan King", email = "jking@usgs.gov"},
     {name = "Dennis Staley", email = "dstaley@usgs.gov"},
@@ -132,7 +132,7 @@ imports = ["webbrowser", "pathlib"]
 
 ##### Dependencies: Safety, Lock
 
-[tool.poe.tasks.safety]
+[tool.poe.tasks.audit]
 help = "Checks package dependencies for security issues"
 cmd = "pip-audit"
 

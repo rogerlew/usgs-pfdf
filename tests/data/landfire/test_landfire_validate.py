@@ -4,7 +4,11 @@ import numpy as np
 import pytest
 
 from pfdf.data.landfire import _validate
-from pfdf.errors import DimensionError
+from pfdf.errors import DimensionError, MissingAPIFieldError, MissingCRSError
+
+#####
+# Individual inputs
+#####
 
 
 class TestLayer:
@@ -71,3 +75,74 @@ class TestRefreshRate:
         with pytest.raises(ValueError) as error:
             _validate.refresh_rate(10)
         assert_contains(error, "refresh_rate must be greater than or equal to 15")
+
+
+#####
+# Request parameters
+#####
+
+
+class TestSubmitJob:
+    def params(_):
+        return {
+            "layers": ["250EVT", "240EVT"],
+            "bounds": [-113.79, 42.29, -113.56, 42.148, 4326],
+            "email": "test@usgs.gov",
+        }
+
+    def test_valid(self):
+        output = _validate.submit_job(**self.params())
+        assert output == {
+            "Layer_List": "250EVT;240EVT",
+            "Area_of_Interest": "-113.79 42.29 -113.56 42.148",
+            "Email": "test@usgs.gov",
+        }
+
+    def test_layer(self, assert_contains):
+        params = self.params()
+        params["layers"] = 5
+        with pytest.raises(TypeError) as error:
+            _validate.submit_job(**params)
+        assert_contains(
+            error,
+            "layers must be a string or list of strings, but layers[0] is not a string",
+        )
+
+    def test_bounds(self, assert_contains):
+        params = self.params()
+        params["bounds"] = params["bounds"][:-1]
+        with pytest.raises(MissingCRSError) as error:
+            _validate.submit_job(**params)
+        assert_contains(error, "bounds must have a CRS")
+
+    def test_email(self, assert_contains):
+        params = self.params()
+        params["email"] = 5
+        with pytest.raises(TypeError) as error:
+            _validate.submit_job(**params)
+        assert_contains(error, "email must be a string")
+
+
+#####
+# Response
+#####
+
+
+class TestField:
+    def test(_):
+        response = {
+            "field1": 1,
+            "field2": 2,
+            "field3": 3,
+        }
+        output = _validate.field(response, "field2", "")
+        assert output == 2
+
+    def test_missing(_, assert_contains):
+        response = {
+            "field1": 1,
+            "field2": 2,
+        }
+        with pytest.raises(MissingAPIFieldError) as error:
+            _validate.field(response, "field3", "test field")
+        assert_contains(error, "LANDFIRE LFPS failed to return the test field")

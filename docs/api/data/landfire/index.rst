@@ -5,25 +5,37 @@ data.landfire package
 
 .. py:module:: pfdf.data.landfire
 
-Utilities to load `LANDFIRE <https://www.landfire.gov/>`_ datasets, including existing vegetation type (EVT) rasters. This data is accessed via the `LANDFIRE Product Service (LFPS) API <https://lfps.usgs.gov/arcgis/rest/services/LandfireProductService/GPServer>`_. Consult the `LANDFIRE data portal <https://landfire.gov/data>`_ for additional details.
+Utilities to load `LANDFIRE <https://www.landfire.gov/>`_ datasets, including existing vegetation type (EVT) rasters. This data is accessed via the `LANDFIRE Product Service (LFPS) API <https://lfps.usgs.gov/>`_. Consult the `LANDFIRE data portal <https://landfire.gov/data>`_ for additional details.
 
 .. list-table::
     :header-rows: 1
 
     * - Content
       - Description
+    * -
+      -
+    * - **Functions**
+      -
     * - :ref:`read <pfdf.data.landfire.read>`
       - Loads LANDFIRE data into memory as a :ref:`Raster <pfdf.raster.Raster>` object
     * - :ref:`download <pfdf.data.landfire.download>`
       - Downloads LANDFIRE data onto the local filesystem.
-    * - :ref:`api <pfdf.data.landfire.api>`
-      - Module supporting low-level LFPS API calls
+    * -
+      -
+    * - **Modules**
+      -
+    * - :ref:`products <pfdf.data.landfire.products>`
+      - Functions that query LFPS for product information
+    * - :ref:`job <pfdf.data.landfire.job>`
+      - Functions for interacting with LFPS jobs
+    * - :ref:`url <pfdf.data.landfire.url>`
+      - Functions that return URLs used to query LFPS
 
 ----
 
 .. _pfdf.data.landfire.read:
 
-.. py:function:: read(layer, bounds, *, timeout = 10, max_job_time = 60, refresh_rate = 15)
+.. py:function:: read(layer, bounds, email, *, timeout = 10, max_job_time = 60, refresh_rate = 15)
     :module: pfdf.data.landfire
 
     Reads a LANDFIRE raster into memory as a Raster object
@@ -32,9 +44,9 @@ Utilities to load `LANDFIRE <https://www.landfire.gov/>`_ datasets, including ex
 
         ::
 
-            read(layer, bounds)
+            read(layer, bounds, email)
 
-        Reads data from a LFPS raster dataset into memory as a :ref:`Raster object <pfdf.raster.Raster>`. The ``layer``` should be the name of an LFPS raster layer. You can find a list of LFPS layer names here: `LFPS Layers <https://lfps.usgs.gov/helpdocs/productstable.html>`_. The ``bounds`` input is used to limit the size of the data query, and should be a BoundingBox-like input with a CRS. The command will only read data from within this bounding box.
+        Reads data from a LFPS raster dataset into memory as a :ref:`Raster object <pfdf.raster.Raster>`. The ``layer``` should be the name of an LFPS raster layer. You can find a list of LFPS layer names here: `LFPS Layers <https://lfps.usgs.gov/products>`_. The ``bounds`` input is used to limit the size of the data query, and should be a BoundingBox-like input with a CRS. The command will only read data from within this bounding box. Finally, you must provide an email address, which LFPS uses to track usage statistics.
 
     .. dropdown:: Timeout Options
 
@@ -53,6 +65,7 @@ Utilities to load `LANDFIRE <https://www.landfire.gov/>`_ datasets, including ex
     :Inputs:
         * **layer** (*str*) -- The name of a LFPS data layer
         * **bounds** (*BoundingBox-like*) -- The bounding box in which data should be read
+        * **email** (*str*) -- An email address associated with the data request
         * **max_job_time** (*scalar*) -- A maximum allowed time (in seconds) for a job to complete processing
         * **refresh_rate** (*scalar*) -- The frequency (in seconds) at which this command should check the status of a submitted job.
         * **timeout** (*scalar | vector*) -- The maximum time in seconds to establish a connection with the LFPS server
@@ -63,7 +76,7 @@ Utilities to load `LANDFIRE <https://www.landfire.gov/>`_ datasets, including ex
 
 .. _pfdf.data.landfire.download:
 
-.. py:function:: download(layer, bounds, *, parent = None, name = None, timeout = 10, max_job_time = 60, refresh_rate = 15)
+.. py:function:: download(layer, bounds, email, *, parent = None, name = None, timeout = 10, max_job_time = 60, refresh_rate = 15)
     :module: pfdf.data.landfire
 
     Download a product from LANDFIRE LFPS
@@ -72,9 +85,9 @@ Utilities to load `LANDFIRE <https://www.landfire.gov/>`_ datasets, including ex
 
         ::
 
-            download(layer, bounds)
+            download(layer, bounds, email)
 
-        Downloads data files for the indicated data layer to the local file system. The ``layer`` should be the name of an LFPS raster layer. You can find a list of LFPS layer names here: `LFPS Layers <https://lfps.usgs.gov/helpdocs/productstable.html>`_. The ``bounds`` input is used to limit the size of the data query, and should be a BoundingBox-like input with a CRS. the command will only download data within this domain.
+        Downloads data files for the indicated data layer to the local file system. The ``layer`` should be the name of an LFPS raster layer. You can find a list of LFPS layer names here: `LFPS Layers <https://lfps.usgs.gov/products>`_. The ``bounds`` input is used to limit the size of the data query, and should be a BoundingBox-like input with a CRS. the command will only download data within this domain. Finally, you must provide an email address, which LFPS uses to track usage statistics.
 
         By default, this command will download data into a folder named ``landfire-<layer>`` within the current directory, but refer below for other path options. Raises an error if the path already exists. Returns the path to the data folder upon successful completion of a download.
 
@@ -104,6 +117,7 @@ Utilities to load `LANDFIRE <https://www.landfire.gov/>`_ datasets, including ex
     :Inputs:
         * **layer** (*str*) -- The name of a LFPS data layer
         * **bounds** (*BoundingBox-like*) -- The bounding box in which data should be downloaded
+        * **email** (*str*) -- An email address associated with the data request
         * **parent** (*Path-like*) -- The path to the parent folder where the data folder should be downloaded. Defaults to the current folder.
         * **name** (*str*) -- The name for the downloaded data folder. Defaults to landfire-<layer>
         * **max_job_time** (*scalar*) -- A maximum allowed time (in seconds) for a job to complete processing
@@ -117,4 +131,6 @@ Utilities to load `LANDFIRE <https://www.landfire.gov/>`_ datasets, including ex
 
 .. toctree::
     
-    api module <api>
+    products module <products>
+    job module <job>
+    url module <url>

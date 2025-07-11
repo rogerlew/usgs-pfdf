@@ -16,7 +16,7 @@ from pathlib import Path
 import pfdf._validate.core._low as validate
 
 if typing.TYPE_CHECKING:
-    from typing import Any, Optional
+    from typing import Any
 
 
 def _path(path: Any, isparent: bool = False) -> Path:

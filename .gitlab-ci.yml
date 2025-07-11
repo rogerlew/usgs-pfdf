@@ -35,6 +35,11 @@ workflow:
     VERSION: '12'
   extends: .image
 
+.python13-base:
+  variables:
+    VERSION: '13'
+  extends: .image
+
 # Everything else requires specific build artifacts
 
 .activate:
@@ -55,9 +60,16 @@ workflow:
   dependencies: 
     - build12
 
+.python13:
+  extends: 
+    - .python13-base
+    - .activate
+  dependencies: 
+    - build13
+
 # Alias to the latest supported python version
 .latest-python:
-  extends: .python12
+  extends: .python13
 
 #####
 # Build
@@ -90,15 +102,21 @@ build12:
     - .python12-base
     - .build
 
+build13:
+  stage: build
+  extends:
+    - .python13-base
+    - .build
+
 #####
 # Test: Safety, Formatting, Tests
 #####
 
-safety:
+audit:
   stage: test
   extends: .latest-python
   script:
-    - poe safety
+    - poe audit
 
 format:
   stage: test
@@ -127,6 +145,11 @@ test12:
   extends:
     - .test
     - .python12
+
+test13:
+  extends:
+    - .test
+    - .python13
 
 webtest:
   stage: test
