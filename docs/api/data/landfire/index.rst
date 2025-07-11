@@ -5,7 +5,7 @@ data.landfire package
 
 .. py:module:: pfdf.data.landfire
 
-Utilities to load `LANDFIRE <https://www.landfire.gov/>`_ datasets, including existing vegetation type (EVT) rasters. This data is accessed via the `LANDFIRE Product Service (LFPS) API <https://lfps.usgs.gov/arcgis/rest/services/LandfireProductService/GPServer>`_. Consult the `LANDFIRE data portal <https://landfire.gov/data>`_ for additional details.
+Utilities to load `LANDFIRE <https://www.landfire.gov/>`_ datasets, including existing vegetation type (EVT) rasters. This data is accessed via the `LANDFIRE Product Service (LFPS) API <https://lfps.usgs.gov/>`_. Consult the `LANDFIRE data portal <https://landfire.gov/data>`_ for additional details.
 
 .. list-table::
     :header-rows: 1
@@ -46,7 +46,7 @@ Utilities to load `LANDFIRE <https://www.landfire.gov/>`_ datasets, including ex
 
             read(layer, bounds, email)
 
-        Reads data from a LFPS raster dataset into memory as a :ref:`Raster object <pfdf.raster.Raster>`. The ``layer``` should be the name of an LFPS raster layer. You can find a list of LFPS layer names here: `LFPS Layers <https://lfps.usgs.gov/helpdocs/productstable.html>`_. The ``bounds`` input is used to limit the size of the data query, and should be a BoundingBox-like input with a CRS. The command will only read data from within this bounding box. Finally, you must provide an email address, which LFPS uses to track usage statistics.
+        Reads data from a LFPS raster dataset into memory as a :ref:`Raster object <pfdf.raster.Raster>`. The ``layer``` should be the name of an LFPS raster layer. You can find a list of LFPS layer names here: `LFPS Layers <https://lfps.usgs.gov/products>`_. The ``bounds`` input is used to limit the size of the data query, and should be a BoundingBox-like input with a CRS. The command will only read data from within this bounding box. Finally, you must provide an email address, which LFPS uses to track usage statistics.
 
     .. dropdown:: Timeout Options
 
@@ -87,7 +87,7 @@ Utilities to load `LANDFIRE <https://www.landfire.gov/>`_ datasets, including ex
 
             download(layer, bounds, email)
 
-        Downloads data files for the indicated data layer to the local file system. The ``layer`` should be the name of an LFPS raster layer. You can find a list of LFPS layer names here: `LFPS Layers <https://lfps.usgs.gov/helpdocs/productstable.html>`_. The ``bounds`` input is used to limit the size of the data query, and should be a BoundingBox-like input with a CRS. the command will only download data within this domain. Finally, you must provide an email address, which LFPS uses to track usage statistics.
+        Downloads data files for the indicated data layer to the local file system. The ``layer`` should be the name of an LFPS raster layer. You can find a list of LFPS layer names here: `LFPS Layers <https://lfps.usgs.gov/products>`_. The ``bounds`` input is used to limit the size of the data query, and should be a BoundingBox-like input with a CRS. the command will only download data within this domain. Finally, you must provide an email address, which LFPS uses to track usage statistics.
 
         By default, this command will download data into a folder named ``landfire-<layer>`` within the current directory, but refer below for other path options. Raises an error if the path already exists. Returns the path to the data folder upon successful completion of a download.
 

@@ -5,7 +5,7 @@ data.landfire.products module
 
 .. py:module:: pfdf.data.landfire.products
 
-Functions that return information about LANDFIRE products. A given LANDFIRE product may have multiple versions, and each version is referred to as a "layer". LANDFIRE uses acronyms to refer to individual products (which may have multiple versions), and you can use these acronyms to filter results in this module.
+Functions that return information about LANDFIRE products available via the the `LFPS API <https://lfps.usgs.gov>`_. A given LANDFIRE product may have multiple versions, and each version is referred to as a "layer". LANDFIRE uses acronyms to refer to individual products (which may have multiple versions), and you can use these acronyms to filter results in this module.
 
 .. list-table::
     :header-rows: 1

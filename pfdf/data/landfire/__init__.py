@@ -12,7 +12,7 @@ function can be used to stream data from one LANDFIRE raster layer within a boun
 box - the read data is returned as a Raster object. Alternatively, use the `download`
 command to save a product to the local file system. Unlike the `read` function, the
 `download` command can be used to acquire datasets derived from vector features. You can
-find a list of available data layer names here: https://lfps.usgs.gov/helpdocs/productstable.html
+find a list of available data layer names here: https://lfps.usgs.gov/products
 
 This package also includes the `url`, `products`, and `job` modules, which can be used
 for low-level interactions with the LFPS API. Most users will not need this module, but

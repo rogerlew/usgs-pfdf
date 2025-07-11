@@ -52,7 +52,7 @@ def download(
     download(layer, bounds, email)
     Downloads data files for the indicated data layer to the local file system. The
     `layer` should be the name of an LFPS raster layer. You can find a list of LFPS
-    layer names here: https://lfps.usgs.gov/helpdocs/productstable.html
+    layer names here: https://lfps.usgs.gov/products
     The `bounds` input is used to limit the size of the data query, and should be a
     BoundingBox-like input with a CRS. the command will only download data within this
     domain. Finally, you must provide an email address, which LFPS uses to track usage
@@ -160,7 +160,7 @@ def read(
     read(layer, bounds, email)
     Reads data from a LFPS raster dataset into memory as a Raster object. The
     `layer` should be the name of an LFPS raster layer. You can find a list of LFPS
-    layer names here: https://lfps.usgs.gov/helpdocs/productstable.html
+    layer names here: https://lfps.usgs.gov/products
     The `bounds` input is used to limit the size of the data query, and should be a
     BoundingBox-like input with a CRS. The command will only read data from within this
     bounding box. Finally, you must provide an email address, which LFPS uses to track

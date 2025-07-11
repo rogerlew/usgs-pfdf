@@ -5,7 +5,7 @@ data.landfire.url module
 
 .. py:module:: pfdf.data.landfire.url
 
-Functions that return URLs used to query the LANDFIRE LFPS API. Note that these functions do not actually query the API themselves - instead, they return URLs that can be used to implement such queries.
+Functions that return URLs used to query the `LANDFIRE LFPS API <https://lfps.usgs.gov/products>`_. Note that these functions do not actually query the API themselves - instead, they return URLs that can be used to implement such queries.
 
 
 .. list-table::

@@ -5,7 +5,7 @@ data.landfire.job module
 
 .. py:module:: pfdf.data.landfire.job
 
-Functions for interacting with LFPS jobs
+Functions for interacting with jobs on the `LANDFIRE Product Service (LFPS) <https://lfps.usgs.gov>`_
 
 .. list-table::
     :header-rows: 1
