@@ -26,12 +26,11 @@ release = _pyproject['project']['version']
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ["sphinx_design", "sphinx_copybutton", "myst_nb"]
+extensions = ["sphinx_design", "sphinx_copybutton", "myst_nb", "sphinx_substitution_extensions"]
 highlight_language = "python"
 pygments_style = "sphinx"
 exclude_patterns = ["images","tutorials/download"]
-
-
+rst_prolog = f".. |release| replace:: {release}"
 
 
 #####

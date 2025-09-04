@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 import pytest
+from requests import Response
 from requests.exceptions import ConnectTimeout, HTTPError, ReadTimeout
 
 from pfdf._validate.core import _url as validate
@@ -40,7 +41,12 @@ class TestHttp:
             "URL must have an 'http' or 'https' scheme, but it has a 'file' scheme instead",
         )
 
-    def test_invalid_connection(_, assert_contains):
+    @patch("requests.head")
+    def test_invalid_connection(_, mock, assert_contains):
+        response = Response()
+        response.status_code = 404
+        mock.return_value = response
+
         url = "https://www.usgs.gov/this-is-not-a-valid-page"
         with pytest.raises(HTTPError) as error:
             validate.http(url, 5)
@@ -49,7 +55,11 @@ class TestHttp:
             "There was a problem connecting to the URL. See the above error for more details",
         )
 
-    def test_valid(_):
+    @patch("requests.head")
+    def test_valid(_, mock):
+        response = Response()
+        response.status_code = 200
+        mock.return_value = response
         url = "https://www.usgs.gov"
         validate.http(url, 5)
 
