@@ -1,8 +1,10 @@
 from math import inf
+from unittest.mock import patch
 
 import numpy as np
 import pytest
 import rasterio
+from requests import Response
 from requests.exceptions import HTTPError
 
 from pfdf.errors import DimensionError
@@ -329,13 +331,22 @@ class TestDataBound:
 
 
 class TestValidateUrl:
-    def test_valid(_):
-        url = "https://www.example.com"
+    @patch("requests.head")
+    def test_valid(_, mock):
+        response = Response()
+        response.status_code = 200
+        mock.return_value = response
+
+        url = "https://www.usgs.gov"
         output, bounds = validate.url(url, False, None, None, 1, (1, 2, 3, 4), "safe")
         assert output == url
         assert bounds == BoundingBox(1, 2, 3, 4)
 
-    def test_invalid_http(_, assert_contains):
+    @patch("requests.head")
+    def test_invalid_http(_, mock, assert_contains):
+        response = Response()
+        response.status_code = 404
+        mock.return_value = response
         url = "https://www.usgs.gov/this-is-not-a-valid-page"
         with pytest.raises(HTTPError) as error:
             validate.url(url, True, 10, None, 1, None, "safe")
@@ -345,7 +356,7 @@ class TestValidateUrl:
         )
 
     def test_invalid_timeout(_, assert_contains):
-        url = "https://www.example.com"
+        url = "https://www.usgs.gov"
         with pytest.raises(ValueError) as error:
             validate.url(url, True, 0, None, 1, None, "safe")
         assert_contains(
@@ -354,7 +365,7 @@ class TestValidateUrl:
         )
 
     def test_invalid_file_option(_, assert_contains):
-        url = "https://www.example.com"
+        url = "https://www.usgs.gov"
         with pytest.raises(TypeError) as error:
             validate.url(url, False, None, 5, 1, None, None)
         assert_contains(error, "driver must be a string")

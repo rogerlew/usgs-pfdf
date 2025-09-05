@@ -1,6 +1,6 @@
 [project]
 name = "pfdf"
-version = "3.0.1"
+version = "3.0.2"
 description = "A package to facilitate post-wildfire debris-flow hazard assessments and research"
 license = "GPL-3.0-only"
 readme = "README.md"
@@ -76,6 +76,7 @@ sphinx = ">=7.2.6"
 furo = "*"
 sphinx_design = ">=0.5"
 sphinx-copybutton = "*"
+sphinx-substitution-extensions = "*"
 myst-nb = "*"
 
 #####

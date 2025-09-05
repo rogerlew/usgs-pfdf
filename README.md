@@ -2,6 +2,13 @@
 
 A Python library to facilitate postfire debris-flow hazard assessments.
 
+[![Documentation Badge](https://img.shields.io/badge/Documentation-Click%20Here!-blue)](https://ghsc.code-pages.usgs.gov/lhp/pfdf/)
+[![Python Versions Badge](https://img.shields.io/badge/Python-3.11+-blue)](https://www.python.org/downloads)
+[![Latest Release Badge](https://code.usgs.gov/ghsc/lhp/pfdf/-/badges/release.svg)](https://code.usgs.gov/ghsc/lhp/pfdf/-/releases/permalink/latest)
+[![Pipeline Badge](https://code.usgs.gov/ghsc/lhp/pfdf/badges/main/pipeline.svg)](https://code.usgs.gov/ghsc/lhp/pfdf/pipelines/main/latest)
+[![Coverage Badge](https://code.usgs.gov/ghsc/lhp/pfdf/badges/main/coverage.svg)](https://code.usgs.gov/ghsc/lhp/pfdf/pipelines/main/latest)
+[![Daily Build Badge](https://code.usgs.gov/ghsc/lhp/pfdf/badges/daily-build/pipeline.svg?key_text=daily+build)](https://code.usgs.gov/ghsc/lhp/pfdf/pipelines/daily-build/latest)
+
 
 ## Summary
 
