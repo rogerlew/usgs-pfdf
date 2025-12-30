@@ -9,7 +9,7 @@ from pfdf._utils import all_nones, aslist, astuple, clean_dims, limits, no_nones
 
 
 def test_real():
-    assert real == [np.integer, np.floating, np.bool_]
+    assert real == [np.integer, np.floating, bool]
 
 
 @pytest.mark.parametrize(

@@ -66,7 +66,7 @@ class TestDtype:
 
     @pytest.mark.parametrize(
         "allowed, string",
-        [(np.bool_, "numpy.bool"), ([np.floating, np.bool_], "numpy.floating")],
+        [(bool, "bool"), ([np.floating, bool], "numpy.floating")],
     )
     def test_failed(self, allowed, string, assert_contains):
         with pytest.raises(TypeError) as error:
@@ -183,8 +183,8 @@ class TestScalar:
 
     def test_dtype_failed(self, assert_contains):
         a = np.array(4, dtype=int)
-        allowed = np.bool_
-        string = "numpy.bool"
+        allowed = bool
+        string = "bool"
         with pytest.raises(TypeError) as error:
             validate.scalar(a, self.name, dtype=allowed)
         assert_contains(error, self.name, string)
@@ -232,8 +232,8 @@ class TestVector:
 
     def test_dtype_failed(self, assert_contains):
         a = np.arange(0, 5, dtype=int)
-        allowed = np.bool_
-        string = "numpy.bool"
+        allowed = bool
+        string = "bool"
         with pytest.raises(TypeError) as error:
             validate.vector(a, self.name, dtype=allowed)
         assert_contains(error, self.name, string)
@@ -316,8 +316,8 @@ class TestMatrix:
 
     def test_dtype_failed(self, assert_contains):
         a = np.arange(0, 10, dtype=int)
-        allowed = np.bool_
-        string = "numpy.bool"
+        allowed = bool
+        string = "bool"
         with pytest.raises(TypeError) as error:
             validate.matrix(a, self.name, dtype=allowed)
         assert_contains(error, self.name, string)

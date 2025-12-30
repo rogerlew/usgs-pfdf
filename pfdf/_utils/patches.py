@@ -73,7 +73,7 @@ class NodataPatch:
                 raise ValueError("Viewfinder and array shape must be the same.")
         # Test typing of array
         try:
-            assert not np.issubdtype(obj.dtype, np.object_)
+            assert not np.issubdtype(obj.dtype, object)
             assert not np.issubdtype(obj.dtype, np.flexible)
         except:
             raise TypeError("`object` and `flexible` dtypes not allowed.")

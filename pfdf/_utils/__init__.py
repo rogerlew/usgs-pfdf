@@ -43,7 +43,7 @@ if typing.TYPE_CHECKING:
     start_stop = tuple[int, int]
 
 # Combination numpy dtype for real-valued data
-real = [np.integer, np.floating, np.bool_]
+real = [np.integer, np.floating, bool]
 
 #####
 # IO
