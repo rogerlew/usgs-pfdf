@@ -183,9 +183,8 @@ def array(
         EmptyArrayError - If the array is empty
     """
 
-    # Convert to array with minimum of 1D. Copy as needed. Note that numpy 2+ uses a
-    # slightly different syntax for copying
-    copy = copy or None
+    # Convert to array with minimum of 1D. Copy as needed.
+    # Use copy parameter directly - numpy 1.26+ requires bool, not None
     input = np.array(input, copy=copy)
     input = np.atleast_1d(input)
 

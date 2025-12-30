@@ -501,7 +501,7 @@ class Segments:
         "Converts segment indices to (user-facing) IDs"
 
         # If empty, just return directly
-        indices = np.array(indices, copy=None)
+        indices = np.array(indices, copy=False)
         if indices.size == 0:
             return indices
 
