@@ -217,4 +217,33 @@ def download(
         "series": series,
         "units": units,
     }
-    return requests.download(path, query_url(statistic), params, timeout, "NOAA PFDS")
+
+    # Get response content
+    response_content = requests.content(query_url(statistic), params, timeout, "NOAA PFDS")
+
+    # Validate response - check if location is not within a project area
+    response_text = response_content.decode('utf-8', errors='ignore')
+    if "result = 'none'" in response_text or "Error 3.0" in response_text:
+        # Extract error message if present
+        if "ErrorMsg" in response_text:
+            # Parse error message from JavaScript: ErrorMsg = 'Error 3.0: ...'
+            error_msg = "Location is not within an Atlas 14 project area"
+            if "Error 3.0:" in response_text:
+                # Try to extract the actual message
+                import re
+                match = re.search(r"ErrorMsg\s*=\s*'([^']*)'", response_text)
+                if match:
+                    error_msg = match.group(1)
+        else:
+            error_msg = "Location is not within an Atlas 14 project area"
+
+        raise ValueError(
+            f"NOAA Atlas 14 data is not available for this location "
+            f"(lat={lat}, lon={lon}). {error_msg}. "
+            f"Atlas 14 coverage varies by region - some areas like Oregon and Washington "
+            f"do not have Atlas 14 precipitation frequency estimates available."
+        )
+
+    # Response is valid, write to file
+    path.write_bytes(response_content)
+    return path
